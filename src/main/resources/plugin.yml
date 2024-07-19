@@ -1,0 +1,5 @@
+name: IwSeller
+main: ru.airdead.iwseller.Main
+version: 1.0
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0
