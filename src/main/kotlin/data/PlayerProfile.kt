@@ -1,12 +1,20 @@
 package ru.airdead.iwseller.data
 
+import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import ru.airdead.iwseller.data.quest.Quest
+import ru.airdead.iwseller.data.quest.QuestStatus
+import ru.airdead.iwseller.data.quest.QuestType
+import ru.airdead.iwseller.data.quest.Reward
 import java.util.concurrent.ConcurrentHashMap
 
 data class PlayerProfile(
     val name: String,
-    val level: Int,
-    val experience: Int,
+    var level: Int,
+    var experience: Int,
+    var coins: Int = 0,
     var quests: MutableList<Quest> = mutableListOf(),
     var currentQuestIndex: Int = 0
 ) {
@@ -19,8 +27,11 @@ data class PlayerProfile(
 
     fun completeQuest(questName: String) {
         quests.find { it.name == questName }?.let {
+            if (it.status == QuestStatus.COMPLETED) return
             it.status = QuestStatus.COMPLETED
+            gainRewards(it.reward)
             currentQuestIndex++
+            checkLevelUp()
         }
     }
 
@@ -40,19 +51,41 @@ data class PlayerProfile(
         return quests.any { it.status == QuestStatus.IN_PROGRESS }
     }
 
+    fun gainRewards(reward: Reward) {
+        coins += reward.coins
+        var i = 0
+        while (i < reward.soulsCount) {
+            Bukkit.getPlayer(name)?.inventory?.addItem(
+                ItemStack(Material.PAPER, 1)
+            )
+            i++
+        }
+        experience += reward.experience
+    }
+
+    fun checkLevelUp() {
+        while (experience >= getExperienceForNextLevel()) {
+            experience -= getExperienceForNextLevel()
+            level++
+        }
+    }
+
+    fun getExperienceForNextLevel(): Int {
+        return level * 100
+    }
+
     fun asString(): String {
         return """
             |Имя: $name
             |Уровень: $level
             |Опыт: $experience
+            |Монеты: $coins
             |Количество задач: ${quests.size}
         """.trimMargin()
     }
 }
 
-private val playerProfiles: ConcurrentHashMap<String, PlayerProfile> = ConcurrentHashMap()
+val playerProfiles: ConcurrentHashMap<String, PlayerProfile> = ConcurrentHashMap()
 
 val Player.profile: PlayerProfile
-    get() = playerProfiles.getOrPut(this.name) {
-        PlayerProfile(name = this.name, level = 1, experience = 0)
-    }
+    get() = playerProfiles[this.name] ?: error("Profile for player ${this.name} not loaded!")

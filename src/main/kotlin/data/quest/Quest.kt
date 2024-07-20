@@ -1,26 +1,13 @@
-package ru.airdead.iwseller.data
+package ru.airdead.iwseller.data.quest
 
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-enum class QuestType {
-    KILL,
-    COLLECT,
-    CRAFT
-}
-
-enum class QuestStatus(
-    val displayName: String
-) {
-    NOT_STARTED("Не начат"),
-    IN_PROGRESS("В процессе"),
-    COMPLETED("Завершен")
-}
 
 data class Quest(
     val name: String,
     val description: String,
-    val reward: String,
+    val reward: Reward,
     val type: QuestType,
     val target: Int,
     var progress: Int = 0,
@@ -33,7 +20,9 @@ data class Quest(
                 lore = listOf(
                     description,
                     "Награда:",
-                    reward,
+                    "${reward.coins} монет",
+                    "Душ: ${reward.soulsCount}",
+                    "Опыт: ${reward.experience}",
                     "Прогресс: $progress/$target",
                     "Статус: ${status.displayName}"
                 )

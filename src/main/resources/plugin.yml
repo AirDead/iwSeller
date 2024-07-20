@@ -3,3 +3,5 @@ main: ru.airdead.iwseller.Main
 version: 1.0
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0
+  - org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4
+  - org.xerial:sqlite-jdbc:3.36.0.3

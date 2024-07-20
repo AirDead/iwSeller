@@ -1,4 +1,4 @@
-package ru.airdead.iwseller.data
+package ru.airdead.iwseller.data.quest
 
 data class QuestPage(
     val pageNumber: Int,
