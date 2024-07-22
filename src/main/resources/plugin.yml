@@ -1,7 +1,14 @@
 name: IwSeller
 main: ru.airdead.iwseller.Main
 version: 1.0
+commands:
+  test:
+    description: Test command
+    usage: /<command>
+    aliases:
+      - t
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4
-  - org.xerial:sqlite-jdbc:3.36.0.3
+  - org.mongodb:mongodb-driver-kotlin-coroutine:5.1.2
+  - org.mongodb:bson-kotlinx:5.1.2

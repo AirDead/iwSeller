@@ -3,7 +3,6 @@ package ru.airdead.iwseller.data.quest
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-
 data class Quest(
     val name: String,
     val description: String,
@@ -19,10 +18,12 @@ data class Quest(
                 setDisplayName(name)
                 lore = listOf(
                     description,
+                    "\n",
                     "Награда:",
                     "${reward.coins} монет",
                     "Душ: ${reward.soulsCount}",
                     "Опыт: ${reward.experience}",
+                    "\n",
                     "Прогресс: $progress/$target",
                     "Статус: ${status.displayName}"
                 )

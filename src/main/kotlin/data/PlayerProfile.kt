@@ -71,7 +71,7 @@ data class PlayerProfile(
     }
 
     fun getExperienceForNextLevel(): Int {
-        return level * 100
+        return level * 110
     }
 
     fun asString(): String {
@@ -80,7 +80,6 @@ data class PlayerProfile(
             |Уровень: $level
             |Опыт: $experience
             |Монеты: $coins
-            |Количество задач: ${quests.size}
         """.trimMargin()
     }
 }
