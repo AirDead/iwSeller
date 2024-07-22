@@ -1,4 +1,4 @@
-package ru.airdead.iwseller.data.quest
+package ru.airdead.iwseller.quest
 
 data class Reward(
     val coins: Int = 0,

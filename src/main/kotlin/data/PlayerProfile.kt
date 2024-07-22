@@ -4,10 +4,10 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import ru.airdead.iwseller.data.quest.Quest
-import ru.airdead.iwseller.data.quest.QuestStatus
-import ru.airdead.iwseller.data.quest.QuestType
-import ru.airdead.iwseller.data.quest.Reward
+import ru.airdead.iwseller.quest.Quest
+import ru.airdead.iwseller.quest.QuestStatus
+import ru.airdead.iwseller.quest.QuestType
+import ru.airdead.iwseller.quest.Reward
 import java.util.concurrent.ConcurrentHashMap
 
 data class PlayerProfile(

@@ -1,4 +1,4 @@
-package ru.airdead.iwseller.data.quest
+package ru.airdead.iwseller.data.mongodb.codec
 
 import org.bson.BsonReader
 import org.bson.BsonWriter
@@ -7,16 +7,12 @@ import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
-
-sealed class QuestType {
-    data class Kill(val entityType: EntityType) : QuestType()
-    data class Collect(val itemType: Material) : QuestType()
-    data class Craft(val itemType: Material) : QuestType()
-}
+import ru.airdead.iwseller.quest.QuestType
 
 class QuestTypeCodec : Codec<QuestType> {
     override fun encode(writer: BsonWriter, value: QuestType, encoderContext: EncoderContext) {
         writer.writeStartDocument()
+        writer.writeInt32("target", value.target)
         when (value) {
             is QuestType.Kill -> {
                 writer.writeString("type", "Kill")
@@ -30,18 +26,18 @@ class QuestTypeCodec : Codec<QuestType> {
                 writer.writeString("type", "Craft")
                 writer.writeString("itemType", value.itemType.name)
             }
-
         }
         writer.writeEndDocument()
     }
 
     override fun decode(reader: BsonReader, decoderContext: DecoderContext): QuestType {
         reader.readStartDocument()
+        val target = reader.readInt32("target")
         val type = reader.readString("type")
         val questType = when (type) {
-            "Kill" -> QuestType.Kill(EntityType.valueOf(reader.readString("entityType")))
-            "Collect" -> QuestType.Collect(Material.valueOf(reader.readString("itemType")))
-            "Craft" -> QuestType.Craft(Material.valueOf(reader.readString("itemType")))
+            "Kill" -> QuestType.Kill(EntityType.valueOf(reader.readString("entityType")), target)
+            "Collect" -> QuestType.Collect(Material.valueOf(reader.readString("itemType")), target)
+            "Craft" -> QuestType.Craft(Material.valueOf(reader.readString("itemType")), target)
             else -> throw IllegalArgumentException("Unknown QuestType: $type")
         }
         reader.readEndDocument()

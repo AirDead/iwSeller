@@ -5,10 +5,11 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.plugin.java.JavaPlugin
-import ru.airdead.iwseller.data.MongoService
-import ru.airdead.iwseller.data.playerProfiles
+import ru.airdead.iwseller.command.TestCommand
+import ru.airdead.iwseller.data.DatabaseType
+import ru.airdead.iwseller.data.RepositoryProvider
 import ru.airdead.iwseller.data.profile
-import ru.airdead.iwseller.data.quest.QuestType
+import ru.airdead.iwseller.quest.QuestType
 import ru.airdead.iwseller.listener.DataManageListener
 import ru.airdead.iwseller.listener.MenuListener
 import java.util.concurrent.Executors
@@ -22,13 +23,20 @@ class Main : JavaPlugin(), Listener {
         server.pluginManager.registerEvents(this, this)
         server.pluginManager.registerEvents(MenuListener, this)
 
+        runBlocking {
+            RepositoryProvider.connect(DatabaseType.MONGODB)
+        }
 
-        scheduler.scheduleAtFixedRate(::compareAndUpdateProfiles, 0, 5, TimeUnit.MINUTES)
+        getCommand("test2")?.setExecutor(TestCommand())
+
+        scheduler.scheduleAtFixedRate({ runBlocking { compareAndUpdateProfiles() } }, 0, 5, TimeUnit.SECONDS)
     }
 
     override fun onDisable() {
         scheduler.shutdown()
-        MongoService.mongoClient.close()
+        runBlocking {
+            RepositoryProvider.disconnect()
+        }
     }
 
     @EventHandler
@@ -42,14 +50,8 @@ class Main : JavaPlugin(), Listener {
         }
     }
 
-    private fun compareAndUpdateProfiles() = runBlocking {
-        val profilesFromDB = MongoService.playersMap
-        profilesFromDB.forEach { dbProfile ->
-            val cachedProfile = playerProfiles[dbProfile.key]
-            if (cachedProfile != null && cachedProfile != dbProfile.value) {
-                MongoService.savePlayerProfile(cachedProfile)
-            }
-        }
+    private suspend fun compareAndUpdateProfiles() {
+        RepositoryProvider.compareAndUpdateProfiles()
+        println("Updated data")
     }
-
 }

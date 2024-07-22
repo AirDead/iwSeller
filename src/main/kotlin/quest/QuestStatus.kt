@@ -1,4 +1,4 @@
-package ru.airdead.iwseller.data.quest
+package ru.airdead.iwseller.quest
 
 enum class QuestStatus(
     val displayName: String

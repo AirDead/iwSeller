@@ -2,7 +2,7 @@ name: IwSeller
 main: ru.airdead.iwseller.Main
 version: 1.0
 commands:
-  test:
+  test2:
     description: Test command
     usage: /<command>
     aliases:
